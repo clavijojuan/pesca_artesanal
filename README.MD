@@ -23,6 +23,7 @@
     <li>os</li>
     <li>glob</li>
     <li>tarfile</li>
+    <li>python-dotenv</li>
 </ul>
 
 ## Utilizar en ambiente local
