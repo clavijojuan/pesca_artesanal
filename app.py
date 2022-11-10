@@ -1,9 +1,8 @@
 from flask import Flask, request, jsonify
 from landsatxplore.api import API
 from landsatxplore.earthexplorer import EarthExplorer
-import glob, os, rasterio, tempfile
+import glob, os, rasterio, tarfile
 from osgeo import gdal
-import tarfile
 
 app = Flask(__name__)
 
@@ -79,37 +78,23 @@ def catalogo():
 
 @app.route('/pruebaeos/descarga', methods=['POST'])
 def descarga():
-    # ee = earthExplorerLogin()
-    # print(data["accion"])
-
-    # ee.download("LT05_L1GS_173058_20111028_20161005_01_T2", './temporal')
-
-
-    # ee.logout()
-    # with tempfile.TemporaryDirectory() as tmpdir:
-    # ee.download("LT51960471995178MPS00", output_dir='./data')
-    # ee.logout()
-
-    # try:
+    try:
         data = request.json
         url = "http://localhost:5000/pruebaeos"+data["output_dir"].replace(".","")+'/'+data["escena"]
         if "accion" in data:
             if data["accion"] == "descarga":
-
                 zipPath = data["output_dir"]+'/'+data["escena"]
-
                 if not os.path.exists(data["output_dir"]):
                     os.mkdir(data["output_dir"])
 
-                # ee = earthExplorerLogin()
-                # ee.download("LT05_L1GS_173058_20111028_20161005_01_T2", output_dir='./temporal')
-                # ee.logout()
+                ee = earthExplorerLogin()
+                ee.download(data["escena"], output_dir=data["output_dir"])
+                ee.logout()
 
                 file = tarfile.open(zipPath+'.tar.gz')
                 os.mkdir(zipPath)
                 file.extractall(zipPath)
                 file.close()
-    
                 response = {
                     "escena": data["escena"],
                     "url": url
@@ -141,8 +126,8 @@ def descarga():
                 return 'Acción no válida'
         else:
             return 'Debe digitar la acción'
-    # except:
-    #     return 'no se pudo efectuar el proceso'
+    except:
+        return 'no se pudo efectuar el proceso'
 
 @app.route('/pruebaeos/ndvi', methods=['POST'])
 def ndvi():
