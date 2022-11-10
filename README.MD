@@ -2,7 +2,7 @@
 
 <ul>
     <li>Docker</li>
-    <li>docker-compose</li>
+    <li>Docker Compose</li>
 </ul>
 
 ## Stack de tecnologías y dependencias utilizadas
